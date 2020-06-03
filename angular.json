@@ -2,5 +2,167 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "projects": {}
+  "projects": {
+    "testLib": {
+      "projectType": "library",
+      "root": "projects/test-lib",
+      "sourceRoot": "projects/test-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/test-lib/tsconfig.lib.json",
+            "project": "projects/test-lib/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/test-lib/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/test-lib/src/test.ts",
+            "tsConfig": "projects/test-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/test-lib/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/test-lib/tsconfig.lib.json",
+              "projects/test-lib/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "testAngularApp": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/testAngularApp",
+      "sourceRoot": "projects/testAngularApp/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/testAngularApp",
+            "index": "projects/testAngularApp/src/index.html",
+            "main": "projects/testAngularApp/src/main.ts",
+            "polyfills": "projects/testAngularApp/src/polyfills.ts",
+            "tsConfig": "projects/testAngularApp/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "projects/testAngularApp/src/favicon.ico",
+              "projects/testAngularApp/src/assets"
+            ],
+            "styles": [
+              "projects/testAngularApp/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/testAngularApp/src/environments/environment.ts",
+                  "with": "projects/testAngularApp/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "testAngularApp:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "testAngularApp:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "testAngularApp:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/testAngularApp/src/test.ts",
+            "polyfills": "projects/testAngularApp/src/polyfills.ts",
+            "tsConfig": "projects/testAngularApp/tsconfig.spec.json",
+            "karmaConfig": "projects/testAngularApp/karma.conf.js",
+            "assets": [
+              "projects/testAngularApp/src/favicon.ico",
+              "projects/testAngularApp/src/assets"
+            ],
+            "styles": [
+              "projects/testAngularApp/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/testAngularApp/tsconfig.app.json",
+              "projects/testAngularApp/tsconfig.spec.json",
+              "projects/testAngularApp/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/testAngularApp/e2e/protractor.conf.js",
+            "devServerTarget": "testAngularApp:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "testAngularApp:serve:production"
+            }
+          }
+        }
+      }
+    }},
+  "defaultProject": "testLib"
 }
